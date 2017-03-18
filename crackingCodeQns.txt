@@ -1,0 +1,914 @@
+ Paking Lot OOD Design
+ 
+ Follow SOLID principles
+ - Single responsiblity principle
+ - Open/Close principle
+ - Liskov substitution principle
+ - Interface segregation principle
+ - Dependency inversion principle
+ 
+ Example:  design a OO parking lot
+ follow:https://www.youtube.com/watch?v=2vtT6TBnOAM
+ 
+ steps:
+ 1) Ask questions and verify the assumptions made. -Type of parking lot- commercial,public, type of vehicles parked, size of parking lot, not of floors etc
+ 2) Identify the major entities of the system and their behaviors
+	- ParkingLot : It has many parking spaces, type of parking lot etc.
+	- ParkingSpace : isVacant, is Full,type of parking - regular, handicapped, price
+	- Vehicles : Define the general operations like park, unpark,
+	- Payment system...
+	
+	Also defines the class and objects for the above.
+	
+	Use interfaces and abstract classes as needed.  
+	Create IparkingLot, Vehicle, IparkingSpace interfaces with common fucntions.  Create Parking Lot class, Parking space as abstract class - regular and handicapped parking space extending and implementing the abstract method getHourlyRate.
+	Create classes car,truck that implement vehicle interface. car can have further specialization like openRoof, limousine etc...
+	
+ 3) Define the specialization and subsets of these entities.
+ 4) Define the relationships between them in class diagram - inherits, extends, compositions, aggregation and using
+ 5) Use design pattern in the above OOD design. Eg: Use singleton pattern to get a single instance of parking lot. Use Strategy pattern to change the payment algorithm runtime, by setting the payment object to interface of the parking space dynamically.
+ 
+ 
+//**********************************************************************************//
+ Find the max product of a triplet in a arraylist
+  - Soln1)  Sort the array - O(nlogN) and find the product
+			Take the max of (top 3 maximum nos, top 2 lowest nos and max no)... coz of neg nos
+  - Soln2)  find the largest, second and third largest element, also top 2 smallest element when traversing the array
+		Takes O(n), C++ code
+		/* Function to find a maximum product of a triplet
+		   in array of integers of size n */
+		int maxProduct(int arr[], int n)
+		{
+			// if size is less than 3, no triplet exists
+			if (n < 3)return -1;
+		 
+			// Initialize Maximum, second maximum and third
+			// maximum element
+			int maxA = INT_MIN, maxB = INT_MIN, maxC = INT_MIN;
+			// Initialize Minimum and second mimimum element
+			int minA = INT_MAX, minB = INT_MAX;
+		 
+			for (int i = 0; i < n; i++)
+			{
+				// Update Maximum, second maximum and third
+				// maximum element
+				if (arr[i] > maxA)
+				{
+					maxC = maxB;
+					maxB = maxA;
+					maxA = arr[i];
+				}
+		 
+				// Update second maximum and third maximum element
+				else if (arr[i] > maxB)
+				{
+					maxC = maxB;
+					maxB = arr[i];
+				}
+		 
+				// Update third maximum element
+				else if (arr[i] > maxC)
+					maxC = arr[i];
+		 
+				// Update Minimum and second mimimum element
+				if (arr[i] < minA)
+				{
+					minB = minA;
+					minA = arr[i];
+				}
+		 
+				// Update second mimimum element
+				else if(arr[i] < minB)
+					minB = arr[i];
+			}
+		 
+			return max(minA * minB * maxA,
+					   maxA * maxB * maxC);
+		}
+ 
+ 
+ //**********************************************************************************//
+Heap sort :
+Ascending order - uses maxheap.. O(nlogn)
+ 
+ 	
+    //function that sorts the array in ascending order using maxheap.
+	void sort(int[] arr){
+		int n = arr.length;
+		
+		//build the heap from bottom up first.  
+		//go to the last parent in the tree and build from there.
+		for(int i=n/2-1; i>=0;i--)
+			heapify(arr,n,i);
+		
+		//once max heap is found, swap the arr[0] with the last element. 
+		//now again heapify the arr excluding the last element..continue this process
+		for(int i=n-1;i>=0;i--){
+			int temp = arr[0];
+			arr[0] = arr[i];
+			arr[i] = temp;
+			
+			//heapify the 0th position 
+			heapify(arr,i,0);
+		}
+	}
+
+	//maxheap
+	//To heapify a subtree rooted with node i which is
+    // an index in arr[]. n is size of heap
+	void heapify(int[] arr,int n,int i){
+		
+		int largest = i;
+		int left = 2*i+1;  //left child
+		int right = 2*i+2;  //right child
+		
+		//check if parent is the largest, else swap
+		if(left<n && arr[left]> arr[largest])
+			largest = left;
+		if(right<n && arr[right]>arr[largest])
+			largest = right;
+		
+		//see if the swap needs to be done
+		if(largest != i){
+			int swap = arr[largest];
+			arr[largest] = arr[i];
+			arr[i] = swap;
+			
+			//now heapify the swapped position recursively
+			heapify(arr,n,largest);
+		}
+	}
+	
+	 
+ //**********************************************************************************//
+ Find the max sub array sum..
+ 
+	public static int maxSubArraySum(int[] arr) {
+
+		int maxSumEndingHere = 0;
+		int maxSumSoFar = Integer.MIN_VALUE;
+		for (int i = 0; i < arr.length; i++) {
+			maxSumEndingHere = maxSumEndingHere + arr[i];
+
+			if (maxSumEndingHere > maxSumSoFar) {
+				maxSumSoFar = maxSumEndingHere;
+			}
+			if (maxSumEndingHere < 0)
+				maxSumEndingHere = 0;
+		}
+		return maxSumSoFar;
+	}
+	
+ //**********************************************************************************//	
+ Check if isBST:
+ 
+    boolean isBSTUtil(Node node, int min, int max)
+    {
+        /* an empty tree is BST */
+        if (node == null)
+            return true;
+ 
+        /* false if this node violates the min/max constraints */
+        if (node.data < min || node.data > max)
+            return false;
+ 
+        /* otherwise check the subtrees recursively
+        tightening the min/max constraints */
+        // Allow only distinct values
+        return (isBSTUtil(node.left, min, node.data-1) &&
+                isBSTUtil(node.right, node.data+1, max));
+    }
+
+
+    boolean checkBST(Node root) {
+       // return isBST(root,Integer.MIN_VALUE,Integer.MAX_VALUE);
+        return isBSTUtil(root,Integer.MIN_VALUE,Integer.MAX_VALUE);
+    }
+
+//**********************************************************************************//
+//mirror a Binary tree..
+Algorithm:
+(1)  Call Mirror for left-subtree    i.e., Mirror(left-subtree)
+(2)  Call Mirror for right-subtree  i.e., Mirror(right-subtree)
+(3)  Swap left and right subtrees.
+          temp = left-subtree
+          left-subtree = right-subtree
+          right-subtree = temp
+		  
+Code:
+	//return the mirror of the tree. Pass the root node to mirror the whole tree.	
+	Node mirror(Node node){
+		if(node == null)
+			return node;
+		
+		Node left = mirror(node.left);
+		Node right = mirror(node.right);
+		
+		node.left = right;
+		node.right = left;
+		
+		return node;
+	}
+	
+//**********************************************************************************//		
+	// print the path to the dest node
+	// returns true if the dest node is found...
+	boolean printPath(Node root, int destNode) {
+		if (root == null)
+			return false;
+
+		if (root.data == destNode || printPath(root.left, destNode) || printPath(root.right, destNode)) {
+			System.out.print(root.data + " ");
+			
+			// add to list , and reverse to print the path if needed
+			return true;
+		}
+		return false;
+	}
+
+//**********************************************************************************//	
+	// Find The Distance From Root To Given Node of a Binary Tree.
+	// similar to finding the path to a given node, except return the count
+	// value;
+	public int Pathlength(Node root, int n1) {
+		if (root != null) {
+			int x = 0;
+			if ((root.data == n1) || (x = Pathlength(root.left, n1)) > 0 || (x = Pathlength(root.right, n1)) > 0) {
+				return x + 1;
+
+			}
+			return 0;
+		}
+		return 0;
+	}
+
+//**********************************************************************************//	
+	// Print All Paths From Root In a Binary Tree Whose Sum is Equal to a Given
+	// Number
+	// Given a binary tree and X, Print all the paths starting from root so that
+	// sum of all the nodes in path equals to a given num­ber.
+	void hasPath(Node node, int sum, String path) {
+
+		if (node != null) {
+			// check if data > sum,then it exceeded, just skip the node. (sum=0,
+			// means exact value, print path)
+			if (node.data > sum)
+				return;
+			else {
+				path += node.data + " ";
+				sum -= node.data; // keep decrementing the sum until 0.
+				if (sum == 0) {
+					System.out.println(path);
+				}
+				hasPath(node.left, sum, path); // do recursively for left and
+												// right childs...keep
+												// decrementing sum till 0.
+				hasPath(node.right, sum, path);
+			}
+		}
+	}
+
+//**********************************************************************************//	
+	//find the height of the tree
+	//find the root node to get the tree height
+	int height(Node root){
+		if(root==null) return 0;
+		return 1 + Math.max(height(root.left), height(root.right));
+	}
+	
+		//level order traversal using BFS -  O(n)
+	void levelTraversal(Node root){
+		Queue q = new LinkedList();
+		if(root==null) return;
+		q.add(root);
+		
+		while(!q.isEmpty()){
+			int levelSize = q.size();
+			while(levelSize>0){
+				Node n = (Node) q.remove();
+				System.out.print(n.data+" ");
+				if(n.left!=null) q.add(n.left);
+				if(n.right!=null) q.add(n.right);
+				levelSize--;
+			}
+			System.out.println(" ");
+		}
+		
+	}
+
+//**********************************************************************************//		
+Build a balanced tree from BST.
+
+	//this fucntion adds all nodes in the arraylist in the incresing order.
+	//does in order traversal to store these nodes.
+	void storeAllNodes(BTNode root,ArrayList list){
+		if(root!=null){
+			storeAllNodes(root.left,list);
+			list.add(root);
+			storeAllNodes(root.right,list);			
+		}
+	}
+	
+	
+	//This function builds the balanced Tree using the sorted list.
+	// make the middle node as the root, then solve left and right recursively and build balanced tree.
+	BTNode buildBalancedTree(ArrayList list,int start,int end){
+		//base case return null. stop recursion.
+		if(start>end)
+			return null;
+		
+		//find the mid node and make it root.
+		int mid = (start+end)/2;
+		BTNode node = (BTNode)list.get(mid);
+		
+		//recursively build the left and right sub trees
+		node.left = buildBalancedTree(list,start,mid-1);
+		node.right = buildBalancedTree(list,mid+1,end);
+		
+		//return the completed root node.
+		return node;		
+	}
+	
+main code:
+
+		ArrayList list = new ArrayList();
+		tree2.storeAllNodes(tree2.root, list);
+		tree2.root = tree2.buildBalancedTree(list, 0, list.size()-1);
+
+//**********************************************************************************//	
+Tree traversals
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+public class TreeTraversal {
+
+	public static void main(String[] args) {
+		Graph g = new Graph();
+
+		Node nA = new Node('A');
+		Node nB = new Node('B');
+		Node nC = new Node('C');
+		Node nD = new Node('D');
+		Node nE = new Node('E');
+		Node nF = new Node('F');
+
+		g.addNode(nA);
+		g.addNode(nB);
+		g.addNode(nC);
+		g.addNode(nD);
+		g.addNode(nE);
+		g.addNode(nF);
+		g.setRootNode(nA);
+
+		g.connectNodes(nA, nB);
+		g.connectNodes(nA, nC);
+		g.connectNodes(nA, nD);
+
+		g.connectNodes(nB, nE);
+		g.connectNodes(nB, nF);
+		g.connectNodes(nC, nF);
+
+		System.out.println(" Running traversals on graph:");
+		System.out.println("DFS");
+		g.dfs();
+		System.out.println("");
+		System.out.println("BFS");
+		g.bfs();
+	}
+}
+
+//class that stores nodes and utility functions for traversals.
+// uses adj matrix to store the edges.
+class Graph {
+
+	int size;
+	// this holds the nodes
+	ArrayList nodes = new ArrayList();
+	// used to indicate the edges btw nodes
+	int[][] adjMatrix;
+	Node rootNode;
+
+	void addNode(Node node) {
+		nodes.add(node);
+	}
+
+	void setRootNode(Node root) {
+		this.rootNode = root;
+	}
+
+	// function to add edges between nodes. this adds an entry in the adj matrix
+	void connectNodes(Node start, Node end) {
+		if (adjMatrix == null) {
+			size = nodes.size();
+			adjMatrix = new int[size][size];
+		}
+
+		int startIndex = nodes.indexOf(start);
+		int endIndex = nodes.indexOf(end);
+		adjMatrix[startIndex][endIndex] = 1;
+		adjMatrix[endIndex][startIndex] = 1;
+	}
+
+	// returns a unvisited node for the given node. It used the adj matrix to
+	// find this.
+	// keep calling this to return all adjacent nodes which are not visited
+	// untill null is returned.
+	Node getUnvisitedNode(Node n) {
+		int index = nodes.indexOf(n);
+		int j = 0;
+
+		while (j < size) {
+			if (adjMatrix[index][j] == 1 && ((Node) nodes.get(j)).visited == false) {
+				return (Node) nodes.get(j);
+			}
+			j++;
+		}
+		return null;
+	}
+
+	// performs DFS traversal - depth first using stack.
+	void dfs() {
+		Stack s = new Stack();
+		s.add(rootNode);
+		rootNode.visited = true;
+		printNode(rootNode);
+
+		while (!s.isEmpty()) {
+			// dont remove node until all its children are visited.
+			Node node = (Node) s.peek();
+			Node child = getUnvisitedNode(node);
+
+			// add the child to the stack. in the next loop, this node will be
+			// explored.
+			// one child is added at once. Whereas in BFS, all the nodes are
+			// added at once.
+			if (child != null) {
+				s.add(child);
+				printNode(child);
+				child.visited = true;
+			} else {
+				// remove the node once all its children are visited.
+				s.pop();
+			}
+		}
+		// clear the visited flag for all the nodes.
+		clearNodes();
+	}
+
+	void bfs() {
+		Queue q = new LinkedList();
+		q.add(rootNode);
+		rootNode.visited = true;
+		printNode(rootNode);
+
+		while (!q.isEmpty()) {
+			// remove the front node from the queue.
+			Node node = (Node) q.remove();
+			Node child = null;
+
+			// add all its children to the queue at once!!
+			while ((child = getUnvisitedNode(node)) != null) {
+				q.add(child);
+				child.visited = true;
+				printNode(child);
+			}
+		}
+		clearNodes();
+	}
+
+	void clearNodes() {
+		for (Object node : nodes) {
+			((Node) node).visited = false;
+		}
+	}
+
+	void printNode(Node node) {
+		System.out.print(node.label + " ");
+	}
+}
+
+class Node {
+	char label;
+	boolean visited;
+	Node(char c) {
+		this.label = c;
+	}
+}
+
+//**********************************************************************************//	
+
+ /*
+ * This class provides custom implementation of HashMap(without using java api's)-
+ * which allows us to store data in key-value pair form.
+ * insertion order of key-value pairs is not maintained.
+ * @param <K>
+ * @param <V>
+ */
+class HashMapCustom<K, V> {
+     
+     private Entry<K,V>[] table;   //Array of Entry.
+     private int capacity= 4;  //Initial capacity of HashMap
+     
+     static class Entry<K, V> {
+         K key;
+         V value;
+         Entry<K,V> next;
+     
+         public Entry(K key, V value, Entry<K,V> next){
+             this.key = key;
+             this.value = value;
+             this.next = next;
+         }
+     }
+     
+ 
+    @SuppressWarnings("unchecked")
+    public HashMapCustom(){
+       table = new Entry[capacity];
+    }
+ 
+   
+ 
+    /**
+     * Method allows you put key-value pair in HashMapCustom.
+     * If the map already contains a mapping for the key, the old value is replaced.
+     * Note: method does not allows you to put null key though it allows null values.
+     * Implementation allows you to put custom objects as a key as well.
+     * Key Features: implementation provides you with following features:-
+     *     >provide complete functionality how to override equals method.
+     *  >provide complete functionality how to override hashCode method.
+     * @param newKey
+     * @param data
+     */
+    public void put(K newKey, V data){
+       if(newKey==null)
+           return;    //does not allow to store null.
+      
+       //calculate hash of key.
+       int hash=hash(newKey);
+       //create new entry.
+       Entry<K,V> newEntry = new Entry<K,V>(newKey, data, null);
+      
+       //if table location does not contain any entry, store entry there.
+        if(table[hash] == null){
+         table[hash] = newEntry;
+        }else{
+           Entry<K,V> previous = null;
+           Entry<K,V> current = table[hash];
+           
+           while(current != null){ //we have reached last entry of bucket.
+           if(current.key.equals(newKey)){           
+               if(previous==null){  //node has to be insert on first of bucket.
+                     newEntry.next=current.next;
+                     table[hash]=newEntry;
+                     return;
+               }
+               else{
+                   newEntry.next=current.next;
+                   previous.next=newEntry;
+                   return;
+               }
+           }
+           previous=current;
+             current = current.next;
+         }
+         previous.next = newEntry;
+        }
+    }
+ 
+    /**
+     * Method returns value corresponding to key.
+     * @param key
+     */
+    public V get(K key){
+        int hash = hash(key);
+        if(table[hash] == null){
+         return null;
+        }else{
+         Entry<K,V> temp = table[hash];
+         while(temp!= null){
+             if(temp.key.equals(key))
+                 return temp.value;
+             temp = temp.next; //return value corresponding to key.
+         }         
+         return null;   //returns null if key is not found.
+        }
+    }
+ 
+ 
+    /**
+     * Method removes key-value pair from HashMapCustom.
+     * @param key
+     */
+    public boolean remove(K deleteKey){
+       
+       int hash=hash(deleteKey);
+              
+      if(table[hash] == null){
+            return false;
+      }else{
+        Entry<K,V> previous = null;
+        Entry<K,V> current = table[hash];
+        
+        while(current != null){ //we have reached last entry node of bucket.
+           if(current.key.equals(deleteKey)){               
+               if(previous==null){  //delete first entry node.
+                     table[hash]=table[hash].next;
+                     return true;
+               }
+               else{
+                     previous.next=current.next;
+                      return true;
+               }
+           }
+           previous=current;
+             current = current.next;
+          }
+        return false;
+      }
+    
+    }
+   
+ 
+    /**
+     * Method displays all key-value pairs present in HashMapCustom.,
+     * insertion order is not guaranteed, for maintaining insertion order
+     * refer LinkedHashMapCustom.
+     * @param key
+     */
+    public void display(){
+       
+       for(int i=0;i<capacity;i++){
+           if(table[i]!=null){
+                  Entry<K, V> entry=table[i];
+                  while(entry!=null){
+                        System.out.print("{"+entry.key+"="+entry.value+"}" +" ");
+                        entry=entry.next;
+                  }
+           }
+       }             
+    
+    }
+    /**
+     * Method implements hashing functionality, which helps in finding the appropriate
+     * bucket location to store our data.
+     * This is very important method, as performance of HashMapCustom is very much
+     * dependent on  this method's implementation.
+     * @param key
+     */
+    private int hash(K key){
+        return Math.abs(key.hashCode()) % capacity;
+    }
+ 
+}
+ 
+ 
+/**
+ * Main class- to test HashMap functionality.
+ */
+public class HashMapCustomApp {
+     
+    public static void main(String[] args) {
+           HashMapCustom<Integer, Integer> hashMapCustom = new HashMapCustom<Integer, Integer>();
+           hashMapCustom.put(21, 12);
+           hashMapCustom.put(25, 121);
+           hashMapCustom.put(30, 151);
+           hashMapCustom.put(33, 15);
+           hashMapCustom.put(35, 89);
+ 
+           System.out.println("value corresponding to key 21="
+                        + hashMapCustom.get(21));
+           System.out.println("value corresponding to key 51="
+                        + hashMapCustom.get(51));
+ 
+           System.out.print("Displaying : ");
+           hashMapCustom.display();
+ 
+           System.out.println("\n\nvalue corresponding to key 21 removed: "
+                        + hashMapCustom.remove(21));
+           System.out.println("value corresponding to key 51 removed: "
+                        + hashMapCustom.remove(51));
+ 
+           System.out.print("Displaying : ");
+           hashMapCustom.display();
+ 
+    }
+}
+
+
+//**********************************************************************************//
+Strings: Making Anagrams
+    public static int numberNeeded(String first, String second) {
+      char[] firstc = first.replaceAll("\\s","").toCharArray();
+      char[] secondc = second.replaceAll("\\s","").toCharArray();
+       HashMap<Character,Integer> map = new HashMap<Character,Integer>();
+        
+        for(char c: firstc){
+            int count = 1;
+            if(map.containsKey(c)){
+                count = map.get(c) + 1;
+            }
+            map.put(c,count);
+        }
+        
+        for(char c: secondc){
+            int count = -1;
+            if(map.containsKey(c)){
+                count = map.get(c) - 1;
+            }
+            map.put(c,count);
+        }
+        
+        int count = 0;
+        Iterator it = map.keySet().iterator();
+        while(it.hasNext()){
+            Character c = (Character)it.next();
+            int val = map.get(c);
+           // System.out.println("key:"+c+" val:"+val);
+           if( 0 != val)
+               count += Math.abs(val);
+        }
+       return count;
+        
+    }
+
+//**********************************************************************************//
+Tries Datastructure: dictionary, contacts (regex match) Hard
+public class Solution {
+    
+   // static TrieNode root;
+   static class TrieNode {
+        public HashMap<Character,TrieNode> children;
+        public boolean isTerminates= false;
+        public char character;
+       public int count = 0;
+        
+       public  TrieNode(){ 
+           children = new HashMap<>();
+       }
+        
+        public TrieNode(char c){
+           children = new HashMap<>();
+            this.character = c;
+            this.count=1;
+        }
+        
+        void addWord(String word){
+            
+            if(word ==null|| word.isEmpty()){
+                return;
+            }
+            char firstChar = word.charAt(0);
+            TrieNode child = children.get(firstChar);
+            if(child==null){
+                child = new TrieNode(firstChar);
+                children.put(firstChar,child);
+            } 
+             count++;
+            if(word.length()>1){
+                child.addWord(word.substring(1));
+            }else { 
+                child.isTerminates = true;
+            }
+        }
+         
+        public int getSize(){
+            return children.keySet().size();
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt(); 
+        TrieNode root = new TrieNode();
+        for(int a0 = 0; a0 < n; a0++){
+            String op = in.next();
+            String contact = in.next();
+            
+            if(op.equals("add")){
+                addContact(contact,root);
+            } else {
+                System.out.println(findContact(contact,root));
+            }
+        }
+    }
+    
+    static void addContact(String name,TrieNode root){
+        root.addWord(name);
+    }
+    static int findContact(String name,TrieNode root){
+        int count=0;
+        TrieNode lastNode = root;
+        TrieNode prevNode = root;
+        for(int i=0;i<name.length();i++){
+            char c = name.charAt(i);
+           
+            if(lastNode!=null)
+               {
+                prevNode = lastNode;
+                lastNode =  lastNode.children.get(c);
+            } 
+            else break;
+        }
+        if(lastNode == null) return 0;
+        if(!lastNode.isTerminates)return lastNode.count-1;
+        return lastNode.count;
+    }
+}
+
+//**********************************************************************************//
+loop in linked list:
+Detect a cycle in a linked list. Note that the head pointer may be 'null' if the list is empty.
+
+A Node is defined as: 
+    class Node {
+        int data;
+        Node next;
+    }
+*/
+
+boolean hasCycle(Node head) { 
+        Node slow = head, fast = head;
+        while (slow != null && fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+ 
+            // If slow and fast meet at same point then loop is present
+            if (slow == fast) {
+                return true;
+            }
+        }
+        return false;
+}
+
+//**********************************************************************************//
+// DP coin change: find maximum possible combination of coins
+m- no of coins, s[i] coin values, n = money.
+      static long countWays(int S[], int m, int n)
+    {
+        //Time complexity of this function: O(mn)
+        //Space Complexity of this function: O(n)
+ 
+        // table[i] will be storing the number of solutions
+        // for value i. We need n+1 rows as the table is
+        // constructed in bottom up manner using the base
+        // case (n = 0)
+        long[] table = new long[n+1];
+ 
+        // Initialize all table values as 0
+        Arrays.fill(table,0);   //O(n)
+ 
+        // Base case (If given value is 0)
+        table[0] = 1;
+ 
+        // Pick all coins one by one and update the table[]
+        // values after the index greater than or equal to
+        // the value of the picked coin
+        for (int i=0; i<m; i++)
+            for (int j=S[i]; j<=n; j++){
+            table[j] += table[j-S[i]];
+          //  System.out.println("table["+j+"] is:"+table[j]);
+        }
+                
+ 
+        return table[n];
+    }
+
+//**********************************************************************************//	
+Check if a no is prime or not!!
+    public static boolean isPrime(int n){
+        if(n==1) return false;
+        if(n==2 || n==3) return true;
+        if(n%2==0 || n%3==0) return false;
+        
+        for(int i=3;i<=(int)Math.sqrt(n);i=i+2){
+            if(n%i==0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+//**********************************************************************************//
+Staircase problem:
+if we can climb 1,2,3 steps at once. find the possible ways to get to the top.
+
+    static int s[] = new int[37];
+    static{
+        s[0] = 0; s[1] =1; s[2]=2; s[3]=4;
+    }
+    
+    static int findCount(int n){
+        if(n==0|| n==1||n==2||n==3)
+            return s[n];
+        else {
+            for(int i=4;i<=n;i++){
+                s[i] = s[i-1]+s[i-2]+s[i-3];
+            }
+            return s[n];
+        }
+    }	
+	
