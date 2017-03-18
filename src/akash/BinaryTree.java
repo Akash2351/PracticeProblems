@@ -4,22 +4,23 @@
  */
 package akash;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class BinaryTree {
 	
-	Node root;
+	BTNode root;
 	BinaryTree(){
 		root = null;
 	}
 	
 	//adds a node to the tree to the BST
 	boolean addNode(int data) {
-		Node current = root;
-		Node parent = current;
+		BTNode current = root;
+		BTNode parent = current;
 
-		Node newNode = new Node(data);
+		BTNode newNode = new BTNode(data);
 
 		if (current == null) {
 			root = newNode;
@@ -45,16 +46,17 @@ public class BinaryTree {
 	}
 	
 	//pre order traversal of the BST - increasing order of display
-	void preOrder(Node node){
+	void preOrder(BTNode node){
 		if(node!=null){
 			preOrder(node.left);
 			System.out.print(node.data+" ");
 			preOrder(node.right);
+			String str;
 		}
 	}
 	
 	boolean find(int key){
-		Node current = root;
+		BTNode current = root;
 		if(current.data == key)
 			return true;
 		
@@ -74,7 +76,7 @@ public class BinaryTree {
 		}
 	}
 	
-	boolean checkIfBst(Node node,int min, int max){
+	boolean checkIfBst(BTNode node,int min, int max){
 		if(node == null)
 			return true;
 		
@@ -85,12 +87,12 @@ public class BinaryTree {
 	}
 	
 	//return the mirror of the tree. Pass the root node to mirror the whole tree.	
-	Node mirror(Node node){
+	BTNode mirror(BTNode node){
 		if(node == null)
 			return node;
 		
-		Node left = mirror(node.left);
-		Node right = mirror(node.right);
+		BTNode left = mirror(node.left);
+		BTNode right = mirror(node.right);
 		
 		node.left = right;
 		node.right = left;
@@ -100,14 +102,14 @@ public class BinaryTree {
 	
 	//find the height of the tree
 	//find the root node to get the tree height  O(n)
-	int height(Node root){
+	int height(BTNode root){
 		if(root==null) return 0;
 		return 1 + Math.max(height(root.left), height(root.right));
 	}
 	
 	// print the path to the dest node
 	// returns true if the dest node is found...
-	boolean printPath(Node root, int destNode) {
+	boolean printPath(BTNode root, int destNode) {
 		if (root == null)
 			return false;
 
@@ -120,10 +122,10 @@ public class BinaryTree {
 		return false;
 	}
 	
-	// Find The Distance From Root To Given Node of a Binary Tree.
+	// Find The Distance From Root To Given BTNode of a Binary Tree.
 	// similar to finding the path to a given node, except return the count
 	// value;  O(n)
-	public int Pathlength(Node root, int n1) {
+	public int Pathlength(BTNode root, int n1) {
 		if (root != null) {
 			int x = 0;
 			if ((root.data == n1) || (x = Pathlength(root.left, n1)) > 0 || (x = Pathlength(root.right, n1)) > 0) {
@@ -139,7 +141,7 @@ public class BinaryTree {
 	// Number
 	// Given a binary tree and X, Print all the paths starting from root so that
 	// sum of all the nodes in path equals to a given num­ber.  O(n)
-	void hasPath(Node node, int sum, String path) {
+	void hasPath(BTNode node, int sum, String path) {
 
 		if (node != null) {
 			// check if data > sum,then it exceeded, just skip the node. (sum=0,
@@ -161,7 +163,7 @@ public class BinaryTree {
 	}
 	
 	//level order traversal using BFS -  O(n)
-	void levelTraversal(Node root){
+	void levelTraversal(BTNode root){
 		Queue q = new LinkedList();
 		if(root==null) return;
 		q.add(root);
@@ -169,7 +171,7 @@ public class BinaryTree {
 		while(!q.isEmpty()){
 			int levelSize = q.size();
 			while(levelSize>0){
-				Node n = (Node) q.remove();
+				BTNode n = (BTNode) q.remove();
 				System.out.print(n.data+" ");
 				if(n.left!=null) q.add(n.left);
 				if(n.right!=null) q.add(n.right);
@@ -180,6 +182,35 @@ public class BinaryTree {
 		
 	}
 	
+	//this fucntion adds all nodes in the arraylist in the incresing order.
+	//does in order traversal to store these nodes.
+	void storeAllNodes(BTNode root,ArrayList list){
+		if(root!=null){
+			storeAllNodes(root.left,list);
+			list.add(root);
+			storeAllNodes(root.right,list);			
+		}
+	}
+	
+	
+	//This function builds the balanced Tree using the sorted list.
+	// make the middle node as the root, then solve left and right recursively and build balanced tree.
+	BTNode buildBalancedTree(ArrayList list,int start,int end){
+		//base case return null. stop recursion.
+		if(start>end)
+			return null;
+		
+		//find the mid node and make it root.
+		int mid = (start+end)/2;
+		BTNode node = (BTNode)list.get(mid);
+		
+		//recursively build the left and right sub trees
+		node.left = buildBalancedTree(list,start,mid-1);
+		node.right = buildBalancedTree(list,mid+1,end);
+		
+		//return the completed root node.
+		return node;		
+	}
 	
 	public static void main(String[] args) {
 		BinaryTree tree = new BinaryTree();
@@ -212,15 +243,42 @@ public class BinaryTree {
 		tree.hasPath(tree.root,18, "");
 		System.out.println("Level order traversal of the tree - BFS");
 		tree.levelTraversal(tree.root);
+		System.out.println();
+		
+		
+		System.out.println("//******************************************************//");
+		System.out.println(" Testing the balancing of tree...");
+		BinaryTree tree2 = new BinaryTree();
+		tree2.addNode(1);
+		tree2.addNode(2);
+		tree2.addNode(3);
+		tree2.addNode(4);
+		tree2.addNode(5);
+		tree2.addNode(6);
+		tree2.addNode(7);
+		System.out.println(" Pre order traversal of tree,before balancing:");
+		tree2.preOrder(tree2.root);
+		System.out.println();
+		System.out.println("Height of the tree:"+tree2.height(tree2.root));
+		ArrayList list = new ArrayList();
+		tree2.storeAllNodes(tree2.root, list);
+		tree2.root = tree2.buildBalancedTree(list, 0, list.size()-1);
+		System.out.println();
+		System.out.println(" Pre order traversal of tree,after balancing:");
+		tree2.preOrder(tree2.root);
+		System.out.println();
+		System.out.println("Height of the tree:"+tree2.height(tree2.root));
+		
+		
 	}
 
 }
 
-class Node{
+class BTNode{
 	int data;
-	Node left;
-	Node right;
-	Node(int data){
+	BTNode left;
+	BTNode right;
+	BTNode(int data){
 		this.data = data;
 		left = null;
 		right = null;
