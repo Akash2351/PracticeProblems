@@ -911,4 +911,147 @@ if we can climb 1,2,3 steps at once. find the possible ways to get to the top.
             return s[n];
         }
     }	
-	
+
+11/10/17
+//**********************************************************************************//
+two sum prob - find the indices of two nos in array that form the target sum
+
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+
+        if(nums == null || nums.length <2)
+            return new int[]{0,0};
+
+        HashMap<Integer,Integer> map = new HashMap<>();
+        for(int i=0;i<nums.length;i++){
+            if(map.containsKey(nums[i])){
+                return new int[]{map.get(nums[i]),i};
+            } else {
+                map.put(target-nums[i],i);
+            }
+        }
+        return new int[]{0,0};
+
+    }
+}
+
+11/10/17
+//**********************************************************************************//
+largest palindrome product
+ public int largestPalindrome(int n) {
+        if (n<1 || n>8)
+            return 0;
+        if(n==1) return 9;
+
+        long max = (long)Math.pow(10,n)-1;
+        long min = max/10;
+
+        for(long i=max; i>min; i--){
+
+           // first find the palindrome, and then if it is the product no.
+           // if i = 98, palin = 9889. Check if this is a product no.
+
+            //long palin = Long.valueOf(i+ new StringBuffer().append(i).reverse().toString());
+            long left = i,right=0;
+            for(long k=i; k!=0; k=k/10 ){
+                right = right*10 + k%10;
+                left = left*10;
+            }
+             long palin = left+right;
+
+            //check if the palin is the product...also invalidate if divisor is greater/lessor
+            for(long j=max; j>min; j--){
+                long div = palin/j;
+                if(div>j || div<min) break;
+                if(palin%j==0) return (int)(palin%1337);
+            }
+        }
+        return 0;
+    }
+
+
+12/10/17
+//**********************************************************************************//
+reverse a single linked list
+    public ListNode reverseList(ListNode head) {
+                ListNode cur=head,prev=null,next=null;
+                if(head==null || head.next ==null)
+                    return head;
+
+                while(cur!=null) {
+                    next = cur.next;
+                    cur.next = prev;
+                    prev = cur;
+                    cur = next;
+                }
+                return prev;
+            }
+
+12/10/17
+//**********************************************************************************//
+Word break problem
+//main: System.out.println(wb.wordBreakDP("iamace",Arrays.asList("i","am","a","ace")));
+
+public boolean wordBreakDP(String s , List<String> wordDict){
+        if(s == null || s.isEmpty())
+            return true;
+        if(s.length() == 1 && wordDict.contains(s)) return true;
+        int t[] = new int[s.length()+1];
+        int len = s.length();
+
+        t[0] = 1;
+        for(int i=1;i<=len;i++){
+            for(int j=0;j<i;j++){
+                if(t[j]==1 && wordDict.contains(s.substring(j,i))){
+                    t[i] =1;
+                    break;
+                }
+            }
+        }
+        return t[len]==1;
+    }
+
+12/10/17
+//**********************************************************************************//
+Roman to Integer
+//main System.out.println(roman.romanToInt("DCIL"));
+    public int getValue(char c) {
+        switch (c) {
+            case 'I':
+                return 1;
+            case 'V':
+                return 5;
+            case 'X':
+                return 10;
+            case 'L':
+                return 50;
+            case 'C':
+                return 100;
+            case 'D':
+                return 500;
+            case 'M':
+                return 1000;
+        }
+        return 0;
+    }
+
+    public int romanToInt(String s) {
+        if (s == null || s.isEmpty())
+            return 0;
+        int sum = 0;
+        char[] chars = s.toCharArray();
+        //first value is added to sum
+        sum += getValue(chars[0]);
+        //check from 2nd roman...see if the prev char is less than current one.
+        //if yes, subtract the prev value.
+        for (int i = 1; i < chars.length; i++) {
+
+            if (getValue(chars[i - 1]) < getValue(chars[i])) {
+                //subtract twice, since its value is added once..
+                sum = sum - (2 * getValue(chars[i - 1]));
+            }
+            //current value is added by default.
+            sum += getValue(chars[i]);
+        }
+        return sum;
+    }
