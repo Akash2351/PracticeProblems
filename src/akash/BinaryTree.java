@@ -161,8 +161,9 @@ public class BinaryTree {
 			}
 		}
 	}
-	
-	//level order traversal using BFS -  O(n)
+
+
+    //level order traversal using BFS -  O(n)
 	void levelTraversal(BTNode root){
 		Queue q = new LinkedList();
 		if(root==null) return;
@@ -220,7 +221,7 @@ public class BinaryTree {
 		tree.addNode(8);
 		tree.addNode(3);
 		tree.addNode(18);
-		
+
 		System.out.println(" Pre order traversal of tree:");
 		tree.preOrder(tree.root);
 		System.out.println();
@@ -239,9 +240,9 @@ public class BinaryTree {
 		System.out.println(" Printing the path to dest: 8->");
 		tree.printPath(tree.root,8); System.out.println();
 		System.out.print(" length:"+tree.Pathlength(tree.root,18));; System.out.println();
-		System.out.println(" Printing the path whose sum is 18:");
-		tree.hasPath(tree.root,18, "");
-		System.out.println("Level order traversal of the tree - BFS");
+        System.out.println(" Printing the path whose sum is 23:");
+        tree.hasPath(tree.root, 23, "");
+        System.out.println("Level order traversal of the tree - BFS");
 		tree.levelTraversal(tree.root);
 		System.out.println();
 		

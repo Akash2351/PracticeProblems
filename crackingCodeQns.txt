@@ -143,21 +143,19 @@ Ascending order - uses maxheap.. O(nlogn)
  //**********************************************************************************//
  Find the max sub array sum..
  
-	public static int maxSubArraySum(int[] arr) {
+	public static int maxSubArray(int[] nums) {
+            int sumSoFar = nums[0], sumEndingHere = nums[0];
+            for(int i=1; i< nums.length; i++){
 
-		int maxSumEndingHere = 0;
-		int maxSumSoFar = Integer.MIN_VALUE;
-		for (int i = 0; i < arr.length; i++) {
-			maxSumEndingHere = maxSumEndingHere + arr[i];
+                //maximum sum at ith position is, max+num[i] or num[i]...take max of them
+                sumEndingHere = Math.max(sumEndingHere+nums[i], nums[i]);
+                //take the max of sumSoFar and sumEndingHere...
+                sumSoFar = Math.max(sumSoFar, sumEndingHere);
+            }
 
-			if (maxSumEndingHere > maxSumSoFar) {
-				maxSumSoFar = maxSumEndingHere;
-			}
-			if (maxSumEndingHere < 0)
-				maxSumEndingHere = 0;
-		}
-		return maxSumSoFar;
-	}
+            return sumSoFar;
+        }
+
 	
  //**********************************************************************************//	
  Check if isBST:
@@ -1055,3 +1053,347 @@ Roman to Integer
         }
         return sum;
     }
+
+14/10/17
+//**********************************************************************************//
+Max depth of a binary tree
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int maxDepth(TreeNode root) {
+
+        if(root == null ) return 0;
+         int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        int max = (int)Math.max(left,right);
+        return 1+ max;
+    }
+}
+
+
+14/10/17
+//**********************************************************************************//
+If a no has alternating bits in it.. return true, else false
+    public static boolean hasAlternatingBits(int n) {
+        int prev, cur;
+        if (n == 0) return true;
+
+        // bitwise and operator...eg if n=5, n & 1 => 101 and 001 => 1
+        prev = (n & 1) == 1 ? 1 : 0;
+        //right shift the no by 1 bit...
+        n = n >> 1;
+        while (n > 0) {
+            cur = (n & 1) == 1 ? 1 : 0;
+            if (prev == cur) return false;
+            prev = cur;
+            n = n >> 1;
+        }
+        return true;
+    }
+
+16/10/17
+//**********************************************************************************//
+Given an array of integers, every element appears twice except for one. Find that single one.
+ Use XOR to find...
+
+     public int singleNumber(int[] nums) {
+         if(nums.length == 1)
+             return nums[0];
+
+         int xor = nums[0];
+         for(int i =1; i<nums.length; i++){
+             xor = xor ^ nums[i];
+         }
+         return xor;
+     }
+
+
+16/10/17
+//**********************************************************************************//
+Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+ class MinStack {
+     List<Integer> list = new ArrayList<>();
+     List<Integer> minList = new ArrayList<>();
+     int min=Integer.MAX_VALUE;
+     int size = 0;
+
+     /** initialize your data structure here. */
+     public MinStack() { }
+
+     public void push(int x) {
+     //keep track of current lowest till this point
+         if(x < min) {
+             min = x;
+         }
+         list.add(x);
+         minList.add(min);
+         size = list.size();
+     }
+
+     public void pop() {
+         size -= 1;
+         list.remove(size);
+         minList.remove(size);
+         if(size == 0){
+         // reset min value.. else will result in error min values... after list is 0, added later
+             min = Integer.MAX_VALUE;
+         } else {
+         // once popped, update the min to latest value in list.
+             min = minList.get(size-1);
+         }
+     }
+
+     public int top() {
+         return list.get(size-1);
+     }
+
+     public int getMin() {
+         return minList.get(size-1);
+     }
+ }
+
+ 16/10/17
+ //**********************************************************************************//
+Write a program to find the node at which the intersection of two singly linked lists begins.
+
+  public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+         HashSet<Integer> set = new HashSet<>();
+
+         if(headA == null || headB == null || (headA== null && headB == null))
+             return null;
+
+         ListNode tempA = headA;
+         // add all elements from list A to a set..
+          while(tempA!=null){
+              set.add(tempA.val);
+              tempA = tempA.next;
+          }
+
+         ListNode tempB = headB;
+         //check if element of list B is in list..if yes, that is the intersection point.
+         //else keep on adding until end. return null in the end
+         while(tempB != null){
+             if(set.contains(tempB.val))
+                 return tempB;
+             else
+                 set.add(tempB.val);
+
+             tempB =tempB.next;
+         }
+
+         return null;
+     }
+
+   16/10/17
+   //**********************************************************************************//
+   You are a professional robber planning to rob houses along a street. Each house has a certain amount
+    of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses
+     have security system connected and it will automatically contact the police if two
+     adjacent houses were broken into on the same night.
+
+  public int rob(int[] num) {
+      int rob = 0; //max monney can get if rob current house
+      int notrob = 0; //max money can get if not rob current house
+      for(int i=0; i<num.length; i++) {
+          int currob = notrob + num[i]; //if rob current value, previous house must not be robbed
+          notrob = Math.max(notrob, rob); //if not rob ith house, take the max value of robbed (i-1)th house and not rob (i-1)th house
+          rob = currob;
+      }
+      return Math.max(rob, notrob);
+  }
+
+  16/10/17
+  //**********************************************************************************//
+  Check if linked list is a palindrome.
+
+  public boolean isPalindrome(ListNode head) {
+          if(head==null || head.next == null)
+              return true;
+
+          //find length of list...
+          int len = 0;
+          ListNode cur = head;
+          while(cur!=null){
+              len++;
+              cur = cur.next;
+          }
+          // for palindrome, reverse second half of list and
+          //run pointers from both end comparing values.
+          //Note: reversing entire linked list and comparing 2 lists will not work...
+          //coz references to head will be lost.. and subsequent elements.
+          cur = head;
+          for(int i=0;i<len/2;i++){
+              cur = cur.next;
+          }
+          ListNode last = reverse(cur);
+          cur=head;
+
+          //compare values from both ends till length/2
+          for(int i=0;i<len/2;i++){
+              if(cur.val != last.val )
+                  return false;
+
+              cur = cur.next;
+              last = last.next;
+          }
+          return true;
+      }
+
+
+      ListNode reverse(ListNode head){
+          ListNode cur = head;
+          ListNode prev = null;
+          ListNode next = null;
+          while(cur!=null){
+              next = cur.next;
+              cur.next = prev;
+              prev = cur;
+              cur = next;
+          }
+          return prev;
+      }
+
+  17/10/17
+  //**********************************************************************************//
+  Balanced Tree - if height difference is 1.
+
+        public boolean isBalanced(TreeNode root) {
+                return checkIfBalanced(root) ==-1 ? false: true;
+            }
+
+          int checkIfBalanced(TreeNode root){
+              if(root == null)
+                  return 0;
+
+              int leftHeight = checkIfBalanced(root.left);
+              if(leftHeight == -1) return -1;
+
+              int rightHeight = checkIfBalanced(root.right);
+              if(rightHeight == -1) return -1;
+
+              if((int)Math.abs(leftHeight-rightHeight) >1)
+                  return -1;
+
+              return Math.max(leftHeight,rightHeight) + 1;
+          }
+
+    17/10/17
+    //**********************************************************************************//
+    Merge two linked lists...
+
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+                ListNode mergedList = new ListNode(0);
+                ListNode temp = mergedList;
+                while(l1 != null && l2 != null){
+                    if(l1.val > l2.val){
+                        temp.next = l2;
+                        l2 = l2.next;
+                    } else {
+                        temp.next = l1;
+                        l1 = l1.next;
+                    }
+                    temp = temp.next;
+                }
+
+                if(l1 == null){
+                    temp.next = l2;
+                } else {
+                    temp.next = l1;
+                }
+                return mergedList.next;
+            }
+
+      17/10/17
+      //**********************************************************************************//
+      Buy Stock and sell with maximum profit
+
+      public static int maxProfit(int[] prices) {
+              int profit =0;
+              if(prices == null ||  prices.length == 1 ||  prices.length == 0)
+                  return profit;
+
+              int minStock = prices[0];
+              for(int i=1; i<prices.length; i++){
+                  if(prices[i]< minStock)
+                      minStock = prices[i];
+                  else {
+                      int tempP = prices[i] - minStock;
+                      profit =  tempP> profit? tempP: profit;
+                  }
+              }
+              return profit;
+          }
+
+      17/10/17
+      //**********************************************************************************//
+      Symmetric trees
+
+        public boolean isSymmetric(TreeNode root) {
+              if(root == null)
+                  return true;
+
+              return checkIfSym(root.left, root.right);
+          }
+
+          boolean checkIfSym(TreeNode t1, TreeNode t2){
+
+              //if both tree nodes are null..i.e same, trees are symmetric
+              if(t1==null && t2== null)
+                  return true;
+              //only one of the tree nodes are null..therefore not sym trees
+              if(t1==null || t2==null)
+                  return false;
+
+              // if node values are same, t1.left tree == t2.right, t1.right==t2.left => then sym
+              if(t1.val == t2.val){
+                  if(checkIfSym(t1.left, t2.right) && checkIfSym(t1.right,t2.left))
+                      return true;
+              }
+              return false;
+          }
+
+      17/10/17
+      //**********************************************************************************//
+      Valid Parenthesis
+
+          public static boolean isValid(String str) {
+
+              if(str == null || str.isEmpty())
+                  return false;
+
+              if( str.length()==1) return false;
+
+              Stack<Character> s = new Stack<>();
+              char chars[] = str.toCharArray();
+              s.push(chars[0]);
+
+              for(int i=1; i< chars.length; i++){
+                  if(s.size()>0) {
+                      char top = (char) s.peek();
+                      if (chars[i] == ')' && top == '(') {
+                          s.pop();
+                          continue;
+                      }
+                      if (chars[i] == ']' && top == '[') {
+                          s.pop();
+                          continue;
+                      }
+                      if (chars[i] == '}' && top == '{') {
+                          s.pop();
+                          continue;
+                      }
+                  }
+                  s.push(chars[i]);
+              }
+
+              if(s.size()>0)return false;
+              return true;
+          }
