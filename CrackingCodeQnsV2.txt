@@ -1,0 +1,105 @@
+
+//**********************************************************************************//
+10/23/17
+Q1) Add the two numbers and return it as a linked list
+
+
+//**********************************************************************************//
+10/23/17
+Q1) Add the two numbers and return it as a linked list.
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+            ListNode head = new ListNode(0);
+            ListNode prev = head;
+            int carry = 0;
+
+            while (l1 != null || l2 != null || carry != 0) {
+                ListNode cur = new ListNode(0);
+                if (l1 != null) {
+                    cur.val += l1.val;
+                    l1 = l1.next;
+                }
+
+                if (l2 != null) {
+                    cur.val += l2.val;
+                    l2 = l2.next;
+                }
+
+                cur.val += carry;
+                //cur node val = l1.val + l2.val + carry...
+                //calculate carry... 13 -> carry 1
+                carry = cur.val / 10;
+                cur.val = cur.val % 10;
+                prev.next = cur;
+                prev = cur;
+            }
+            return head.next;
+        }
+
+//**********************************************************************************//
+10/18/17
+Q2) Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
+Input:
+s: "cbaebabacd" p: "abc"
+Output:
+[0, 6]
+
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> list = new ArrayList<>();
+        if (s == null) return list;
+        int strLen = s.length();
+        int pLen = p.length();
+        //sliding window... slide for pattern length each iteration
+        for (int i = 0; i < strLen; i++) {
+            if (i + pLen > strLen) break;
+            if (isAnagram(s.substring(i, i + pLen), p))
+                list.add(i);
+        }
+        return list;
+    }
+
+    //function to check if two strings are anagrams or not...
+    boolean isAnagram(String s1, String s2) {
+        // count the chars in first string and verify with second
+        int dict[] = new int[26];
+        if (s1 == null || s2 == null || s1.length() != s2.length()) return false;
+
+        for (char c : s1.toCharArray()) {
+            dict[c - 'a']++;
+        }
+        for (char c : s2.toCharArray()) {
+            dict[c - 'a']--;
+            if (dict[c - 'a'] < 0) return false;
+        }
+        return true;
+    }
+
+//**********************************************************************************//
+10/18/17
+Q3) Find All Numbers Disappeared in an Array
+Input:
+[4,3,2,7,8,2,3,1]
+Output:
+[5,6]
+
+    List<Integer> list = new ArrayList<>();
+        if(nums == null || nums.length == 1)
+            return list;
+
+        // the nos in the given array range from 1 to n...so indices are -l less...0 to n-1
+        // for every no found, mark it negative in the same array for indices...
+        for(int i=0; i< nums.length; i++){
+            int index = (int)Math.abs(nums[i]) -1;
+            if(nums[index]>0){
+                nums[index] = - nums[index];
+            }
+        }
+        //see if any no is positive...that means, it was not visited first...that is a missing no
+        for(int i=0; i< nums.length; i++){
+            if(nums[i]>0)
+                list.add(i+1);
+        }
+        return list;
+    }
