@@ -1,11 +1,6 @@
 
 //**********************************************************************************//
 10/23/17
-Q1) Add the two numbers and return it as a linked list
-
-
-//**********************************************************************************//
-10/23/17
 Q1) Add the two numbers and return it as a linked list.
 Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
 Output: 7 -> 0 -> 8
@@ -102,4 +97,219 @@ Output:
                 list.add(i+1);
         }
         return list;
+    }
+
+//**********************************************************************************//
+10/24/17
+Q4) Given a string, find the length of the longest substring without repeating characters
+Given "abcabcbb", the answer is "abc", which the length is 3.
+Given "bbbbb", the answer is "b", with the length of 1
+
+    public static int lengthOfLongestSubstring(String s) {
+        int start = 0, max = 0;
+        //store each char in map, with its occurence
+        HashMap<Character, Integer> map = new HashMap<>();
+        char c = 0; //dummy value
+        int len = s.length();
+
+        for (int i = 0; i < len; i++) {
+            c = s.charAt(i);
+            if (map.containsKey(c) && map.get(c) >= start) {
+                //if the character is present in map, then that char is repeated..
+                // reset the start pointer if its value is greater than current start.
+                //check case abba...
+                start = map.get(c) + 1;
+            }
+            map.put(c, i);
+            max = (int) Math.max(max, i - start + 1);
+        }
+        return max;
+    }
+
+//**********************************************************************************//
+10/24/17
+Q5) Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses
+
+    public List<String> generateParenthesis(int n) {
+        List<String> list = new ArrayList<>();
+        generateRecursive("",n,n,list);
+        return list;
+    }
+
+    public void generateRecursive(String cur, int leftRemaining, int rightRemaining, List<String> list){
+        if(leftRemaining == 0 && rightRemaining == 0){
+            list.add(cur);
+            return;
+        }
+
+        if(leftRemaining > 0){
+            generateRecursive(cur+"(",leftRemaining-1, rightRemaining, list);
+            //possible combinations when left < right...valid case
+            if(leftRemaining < rightRemaining){
+                generateRecursive(cur+")", leftRemaining, rightRemaining-1, list);
+            }
+        } else {
+            generateRecursive(cur+")", leftRemaining, rightRemaining-1, list);
+        }
+    }
+
+//**********************************************************************************//
+10/26/17
+Q6) Find the longest palindromic substring in the given string...
+    static int low,curMax;
+    public static  String longestPalindrome(String s) {
+        int len = s.length();
+        if(s == null|| s.isEmpty())
+            return null;
+        if(s.length()==1)
+            return s;
+        for(int i=0; i<len; i++){
+            extendPalindrome(s,i,i); //check for odd palindromes starting from i
+            extendPalindrome(s,i,i+1); // check for even palindromes
+        }
+        return s.substring(low, low+curMax);
+    }
+
+    //extend palindrome around its centre...
+    static void extendPalindrome(String s, int left, int right){
+        while(left>=0 && right<s.length() && s.charAt(left)==s.charAt(right)){
+            left--;
+            right++;
+        }
+        if(curMax < right-left-1){
+            low = left+1;
+            curMax = right-left-1;
+        }
+    }
+//**********************************************************************************//
+10/26/17
+Q7) Merge two trees...
+
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if(t1==null && t2==null)
+            return null;
+
+        int val = (t1==null? 0 : t1.val) + (t2==null? 0 : t2.val);
+        TreeNode newNode =  new TreeNode(val);
+        newNode.left = mergeTrees(t1==null? null:t1.left, t2==null?null:t2.left);
+        newNode.right = mergeTrees(t1==null? null:t1.right, t2==null?null:t2.right);
+
+        return newNode;
+    }
+
+//**********************************************************************************//
+10/27/17
+Q8) 3 Sum: Given an array S of n integers, are there elements a, b, c in S such
+that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+
+    public List<List<Integer>> threeSum(int[] nums) {
+        ArrayList<List<Integer>> list = new ArrayList<>();
+        //sort the elements, pick element at once,
+        //have 2 pointers -> run from both ends... compare the sum with target and
+        // manipulate the left and right pointers.
+        Arrays.sort(nums);
+        int len = nums.length;
+        int target=0;
+
+        for(int i=0;i<len;i++){
+            //eliminate duplicates by comparing adjacent elements.
+            if( i==0 || nums[i]!=nums[i-1]){
+                int left=i+1,right=len-1;
+                while( left<right){
+                    int tempSum = nums[i] +nums[left] + nums[right];
+                    if( tempSum == target){
+                        list.add(new ArrayList<>(Arrays.asList(nums[i],nums[left],nums[right])));
+                        left++; right--;
+                        //skip duplicate elements...
+                        while(left<right && nums[left]==nums[left-1])left++;
+                        while(left<right && nums[right]==nums[right+1])right--;
+                    } else if(tempSum <target){
+                        //num array is sorted...so moving right will increase sum..
+                        left++;
+                    } else {
+                        right--;
+                    }
+                } //while end
+            }
+        }
+        return list;
+    }
+
+//**********************************************************************************//
+10/27/17
+Q9) container with most water... given array with heights at location i, find maximum
+  area of the container...
+
+    public static int maxArea(int[] height) {
+        int max=0, left=0, right=height.length-1;
+
+        if(height==null || height.length <2)
+            return max;
+        //traverse from outermost container, moving left or right wall accordingly
+        while(left<right){
+            //area = width * height..
+            max = Math.max(max, (right-left)*Math.min(height[left],height[right]));
+            if(height[left]<height[right])
+                left++;
+            else
+                right--;
+        }
+        return max;
+    }
+
+//**********************************************************************************//
+10/28/17
+Q10) Given a linked list, remove the nth node from the end of list and return its head.
+    //two pass - > first pass cal length of list..second pass, at nth position, remove
+    //node value and connect.
+
+    //one pass algorithm.. using 2 pointers, which are n nodes apart.
+    // advance the first pointer to n positions first
+    //keep advancing second pointer until first becomes null. now
+    //second will be at nth node from the end.
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        //create a dummy node to handle first node removal easy.
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+
+        ListNode first = dummy;
+        ListNode second = dummy;
+        // Advances first pointer so that the gap between first and second is n nodes apart
+        for (int i = 0; i < n + 1; i++) {
+            first = first.next;
+        }
+        // Move first to the end, maintaining the gap
+        //when second moves to nth position from end, first will be null.
+        while (first != null) {
+            first = first.next;
+            second = second.next;
+        }
+        second.next = second.next.next;
+        return dummy.next;
+    }
+
+//**********************************************************************************//
+10/29/17
+Q11) Find the majority element in a array.
+    public int majorityElement(int[] nums) {
+        HashMap<Integer,Integer> map = new HashMap<>();
+
+        int len =  nums.length / 2;
+        int maj = 0;
+        for(int num: nums){
+            int count =1;
+            if(!map.containsKey(num)){
+                map.put(num,count);
+            } else {
+                count = map.get(num) + 1;
+                map.put(num,count);
+            }
+
+            if(count>len )
+            {
+                return num;
+            }
+        }
+
+        return maj;
     }
